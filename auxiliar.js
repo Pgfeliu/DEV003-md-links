@@ -19,19 +19,19 @@ const fs = require('fs');
 
 
 //1,2,3
-const archivo = process.argv[2];
-console.log(archivo)
+// const archivo = process.argv[2];
+// console.log(archivo)
 
 //4.¿Es un archivo md? FUNCIÓN Y LLAMAR A ARCHIVO.
 const md = (archivo) => {
   const extension = path.extname(archivo);
   if (extension === '.md') {
-    return archivo
+    return true
   } else {
-    console.log('Error')
+    return false
   }
 };
-md(archivo);
+md('./files/links.md');
 
 
 //5. ¿Existe la ruta??
@@ -42,12 +42,14 @@ const existeRuta = (ruta) => {
 
 
 //6. ¿Es absoluta??
-const rutaAbsoluta = path.resolve(archivo); //pongo archivo, porque queremos sacar la ruta al archivo
-console.log(rutaAbsoluta)
+const rutaAbsoluta = (ruta) => {
+  return path.resolve(ruta)
+}; //pongo archivo, porque queremos sacar la ruta al archivo
+// console.log(rutaAbsoluta)
 
 //7. Leer archivo, para eso utilizar la ruta absoluta
 const leerArchivo = (rutas) => {
-return new Promise ((resolve,reject)=>{
+return new Promise ((resolve,reject) => {
   fs.readFile(rutas,'utf-8', (err,data) => {
     if(err){
       reject (err);
@@ -57,29 +59,36 @@ return new Promise ((resolve,reject)=>{
   })
 }) 
 };
+
 leerArchivo('./files/link.md').then((result) => {
   console.log(result)
 }).catch((error) => {
   console.log(error)
-})
-// readfile(nombre de archivo, include_path, contexto)
+});
+
 
 //8. Validar si el archivo tiene links. Si no contiene, lanzar error.
-// fs.readlink('./',(err,archivo) => {
-//   if(err) {
-//     return err;
-//   } else {
-//     console.log(archivo)
-//   }
-// })
-
-const processLink = (contenidoArchivo) => {
-  const linkCompleto = /\[([^\]]+)\]\((http[s]?:\/\/[^\)]+)\)/g; //expresión regular
+const processLink = (contenidoArchivo, contenidoRuta) => {
+  console.log(contenidoArchivo)
+  const linkCompletoExpresReg = /\[([^\]]+)\]\((http[s]?:\/\/[^\)]+)\)/g; //expresión regular
   //tomar el contenido del archivo y comparalo a la expresión regular  (linkCompleto)
-  const compararLink = Array.from(contenidoArchivo.match(linkCompleto))
-  console.log(compararLink)
+  const url = /\(([^)]+)\)/ //me muestra solo lo que esta en parentesis del link.
+  const keys = /\[(.*?)\]/; //me muetra lo que esta entre llaves del link
+  const informationLink = Array.from(contenidoArchivo.match(linkCompletoExpresReg), (links) => {
+    console.log(informationLink)
+    return {
+      href: links.match(url)[1] ,
+      txt: links.match(keys)[1],
+      file: contenidoRuta,
+    }
+  })
+    return informationLink
+  // console.log(contenidoArchivo)
 }
-processLink(leerArchivo('./files/link.md'))
+leerArchivo('./files/links.md').then((result) => {
+  processLink(result,'./files/links.md')
+})
+// processLink(leerArchivo('./files/link.md'))
 
 //9. Extraer los links
 //10. Obtener validate en true o false
