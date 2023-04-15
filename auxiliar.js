@@ -1,8 +1,24 @@
-
 const path = require('path');
 const fs = require('fs');
 
-//4.¿Es un archivo md? FUNCIÓN Y LLAMAR A ARCHIVO.
+
+//1. ¿Existe la ruta??
+const existeRuta = (ruta) => {
+  return fs.existsSync(ruta)
+};
+
+
+//2. ¿Es absoluta? Transformación de Ruta relativa a absoluta
+const resolverRuta = (ruta) => {
+  return path.resolve(ruta)
+};
+//2.1 Ruta absoluta
+// const rutaAbsoluta = (ruta) => {
+//   return path.isAbsolute(ruta)
+// };
+// console.log(rutaAbsoluta)
+
+//3.¿Es un archivo md? 
 const md = (archivo) => {
   const extension = path.extname(archivo);
   if (extension === '.md') {
@@ -13,30 +29,7 @@ const md = (archivo) => {
 };
 md('./files/links.md');
 
-
-//5. ¿Existe la ruta??
-const existeRuta = (ruta) => {
-  return fs.existsSync(ruta)
-
-};
-
-//6.0 Transformación de Ruta relativa a absoluta
-const resolverRuta = (ruta) => {
-  return path.resolve(ruta)
-};
-//6.0¿1 Ruta absoluta
-// const rutaAbsoluta = (ruta) => {
-//   return path.isAbsolute(ruta)
-// };
-
-
-// console.log(rutaAbsoluta)
-
-
-
-
-
-//7. Leer archivo, para eso utilizar la ruta absoluta
+//4. Leer archivo
 const leerArchivo = (rutas) => {
   return new Promise((resolve, reject) => {
     fs.readFile(rutas, 'utf-8', (err, data) => {
@@ -48,7 +41,6 @@ const leerArchivo = (rutas) => {
     })
   })
 };
-
 leerArchivo('./files/links.md').then((result) => {
   console.log(result)
 }).catch((error) => {
@@ -56,7 +48,7 @@ leerArchivo('./files/links.md').then((result) => {
 });
 
 
-//8-9. Validación y extración de links si el archivo tiene links. Si no contiene, lanzar error.
+//5.6. Validación y extración de links si el archivo tiene links. 
 const processLink = (contenidoArchivo, contenidoRuta) => {
   // console.log(contenidoArchivo)
   const linkCompletoExpresReg = /\[([^\]]+)\]\((http[s]?:\/\/[^\)]+)\)/g; //expresión regular
@@ -73,11 +65,11 @@ const processLink = (contenidoArchivo, contenidoRuta) => {
   // console.log(informationLink)
   return informationLink
 }
-// leerArchivo('./files/links.md').then((result) => {
-//   processLink(result,'./files/links.md')
-// });
+leerArchivo('./files/links.md').then((result) => {
+  processLink(result, './files/links.md')
+});
 
-//10. Validar los link y recorrer los HTML
+//7. Validar los link y recorrer los HTML
 const validarLinks = (arregloDatos) => {
   const recorrerDatos = arregloDatos.map(objetos => {
     return fetch(objetos.href)
@@ -102,9 +94,9 @@ const validarLinks = (arregloDatos) => {
 }
 
 
-// leerArchivo('./files/links.md').then((result) => {
-//   validarLinks(processLink(result, './files/links.md')).then(console.log)
-// })
+leerArchivo('./files/links.md').then((result) => {
+  validarLinks(processLink(result, './files/links.md')).then(console.log)
+})
 
 module.exports = {
   md,
@@ -117,13 +109,13 @@ module.exports = {
 
 
 //Funciones auxiliares
-//4. Validar que el archivo sea md
-//5. ¿Existe la Ruta?
-//6. ¿La ruta es absoluta?
-//7. Leer archivo, para eso utilizar la ruta absoluta
-//8. Validar si el archivo tiene links. Si no contiene, lanzar error.
-//9. Extraer los links
-//10. Obtener validate en true o false
-//11. Si validate es true retornamos información completa. Si validate es false, retornamos información false.
+
+//1. ¿Existe la Ruta?
+//2. ¿La ruta es absoluta?
+//3. Validar que el archivo sea md
+//4. Leer archivo
+//5. Validar si el archivo tiene links. Si no contiene, lanzar error.
+//6. Extraer los links
+//7. Si validate es true retornamos información completa. Si validate es false, retornamos información false.
 
 

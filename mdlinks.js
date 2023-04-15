@@ -11,19 +11,19 @@ const mdLinks = (ruta, options) => {
           console.log(md(ruta), 'mi archivo es md :)')
           if (leerArchivo(ruta)
             .then((result) => {
-              const links = validarLinks(result, './files/links.md')
               if (!options.validate) {
-                resolve(links)
+                resolve(processLink(result, './files/links.md'))
               } else {
-                resolve(validarLinks(links))
+                resolve(validarLinks(processLink(result, './files/links.md')))
               }
             }).catch((error) => {
               reject(error)
-            })
+            }))
           
-        }
+      }
+    }
+  }})
 
-  });
 };
 
 mdLinks('./files/links.md', { validate: true }).then().catch
