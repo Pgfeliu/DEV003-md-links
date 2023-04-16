@@ -1,32 +1,31 @@
 const { md, existeRuta, resolverRuta, leerArchivo, validarLinks, processLink } = require('./auxiliar.js')
 
-const mdLinks = (ruta, options) => {
+const mdLink = () => {
   return new Promise((resolve, reject) => {
-    if (existeRuta(ruta)) {
-      console.log(existeRuta(ruta), 'hola mi ruta esta aquí');
-      //si la ruta es relativa:
-      if (resolverRuta(ruta)) {
+    if (existeRuta(ruta)){
+      console.log(existeRuta(ruta), 'hola mi ruta esta aquí')
+      if (resolverRuta(ruta)){
         console.log(resolverRuta(ruta), 'mi ruta es soy absoluta')
-        if (md(ruta)) {
+        if (md(ruta)){
           console.log(md(ruta), 'mi archivo es md :)')
-          if (leerArchivo(ruta)
-            .then((result) => {
-              if (!options.validate) {
-                resolve(processLink(result, './files/links.md'))
-              } else {
-                resolve(validarLinks(processLink(result, './files/links.md')))
-              }
-            }).catch((error) => {
-              reject(error)
-            }))
-          
+          if (leerArchivo(ruta).then((result) => {
+            if (!options.validate) {
+              resolve(processLink(result, './files/links.md')) //si el resultado es negativo, solo me debe devolver los link, no validarlos.
+            } else {
+              resolve(validarLinks(processLink(result, './files/links.md'))) //en cambio si es true, debe validar el link.
+            }
+          }).catch((error) => {
+            reject(error)
+          })
+          )
+        }
       }
     }
-  }})
-
-};
+  })
+}
 
 mdLinks('./files/links.md', { validate: true }).then().catch
+
 
 
 
