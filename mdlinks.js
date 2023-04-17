@@ -1,6 +1,7 @@
-const { md, existeRuta, resolverRuta, leerArchivo, validarLinks, processLink } = require('./auxiliar.js')
+const { md, existeRuta, resolverRuta, leerArchivo, validarLinks, 
+  processLink, ruta, validate, stats, validarOpciones, links } = require('./auxiliar.js')
 
-const mdLink = () => {
+const mdLinks = () => {
   return new Promise((resolve, reject) => {
     if (existeRuta(ruta)){
       console.log(existeRuta(ruta), 'hola mi ruta esta aquí')
@@ -9,22 +10,24 @@ const mdLink = () => {
         if (md(ruta)){
           console.log(md(ruta), 'mi archivo es md :)')
           if (leerArchivo(ruta).then((result) => {
-            if (!options.validate) {
-              resolve(processLink(result, './files/links.md')) //si el resultado es negativo, solo me debe devolver los link, no validarlos.
-            } else {
-              resolve(validarLinks(processLink(result, './files/links.md'))) //en cambio si es true, debe validar el link.
+            if (validate) {
+              resolve(processLink(result, ruta)) //si el resultado es negativo, solo me debe devolver los link, no validarlos.
+            } else if(validate===true && stats===false) {
+              resolve(validarLinks(processLink(result, ruta))) //en cambio si es true, debe validar el link.
+            } else if(stats) {
+              resolve(validarOpciones(links))
             }
           }).catch((error) => {
             reject(error)
           })
-          )
+          );
         }
-      }
-    }
-  })
-}
+        }  
+        }  
+        })    
+  }
 
-mdLinks('./files/links.md', { validate: true }).then().catch
+mdLinks(ruta, {validate}).then().catch
 
 
 
@@ -41,6 +44,3 @@ mdLinks('./files/links.md', { validate: true }).then().catch
 //7. Obtener validate en true o false
 //8. Si validate es true retornamos información completa. Si validate es false, retornamos información false.
 
-module.exports = {
-  mdLinks
-};

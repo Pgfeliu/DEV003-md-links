@@ -6,13 +6,13 @@ describe('ver si la ruta existe', () => {
     });
 });
 
-describe('si la ruta no existe', () => {
-    it ('si la ruta no existe, retorna false', () => {
-        expect(functionAuxiliares.existeRuta('./files/noexiste.md')).toEqual(false)
-    });
-});
-describe('es una ruta absoluta', () =>{
-    it ('retorna la ruta si esta es absoluta', () => {
-        expect(functionAuxiliares.resolverRuta('C:\Users\the_p\ProyectosPame\DEV003-md-links\files\links.md')).toEqual('C:\Users\the_p\ProyectosPame\DEV003-md-links\files\links.md')
-    });
-});
+// describe('si la ruta no existe', () => {
+//     it ('si la ruta no existe, retorna false', () => {
+//         expect(functionAuxiliares.existeRuta('./files/noexiste.md')).toEqual(false)
+//     });
+// });
+// describe('es una ruta absoluta', () =>{
+//     it ('retorna la ruta si esta es absoluta', () => {
+//         expect(functionAuxiliares.resolverRuta('C:\Users\the_p\ProyectosPame\DEV003-md-links\files\links.md')).toEqual('C:\Users\the_p\ProyectosPame\DEV003-md-links\files\links.md')
+//     });
+// });

@@ -1,6 +1,8 @@
 {
   "name": "md-links",
   "version": "0.1.0",
+  "description": "archivo que analiza archivos md",
+  "main": "./mdlinks.js",
   "engines": {
     "node": ">=16.x"
   },
@@ -14,5 +16,18 @@
   },
   "devDependencies": {
     "jest": "^29.5.0"
+  },
+  "bin": {
+    "say-hello": "./cli.js"
+  },
+  "dependencies": {
+    "semver": "^7.4.0"
+  },
+  "author":"\" Pamela González \"",
+  "homepage": "https://github.com/Pgfeliu/DEV003-md-links#readme",
+  "license":"ISC",
+  "bugs":{
+    "url": "https://github.com/Pgfeliu/DEV003-md-links/issues",
+    "email": "pamela.gfeliu@gmail.com"
   }
 }
