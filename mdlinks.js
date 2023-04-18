@@ -1,22 +1,22 @@
-const { md, existeRuta, resolverRuta, leerArchivo, validarLinks, 
-  processLink, ruta, validate, stats, validarOpciones, links } = require('./auxiliar.js')
+const { md, existeRuta, resolverRuta, leerArchivo, validarLinks, processLink} = require('./auxiliar.js')
 
-const mdLinks = () => {
+const mdLinks = (path, options) => {
   return new Promise((resolve, reject) => {
-    if (existeRuta(ruta)){
-      console.log(existeRuta(ruta), 'hola mi ruta esta aquí')
-      if (resolverRuta(ruta)){
-        console.log(resolverRuta(ruta), 'mi ruta es soy absoluta')
-        if (md(ruta)){
-          console.log(md(ruta), 'mi archivo es md :)')
-          if (leerArchivo(ruta).then((result) => {
-            if (validate) {
-              resolve(processLink(result, ruta)) //si el resultado es negativo, solo me debe devolver los link, no validarlos.
-            } else if(validate===true && stats===false) {
-              resolve(validarLinks(processLink(result, ruta))) //en cambio si es true, debe validar el link.
-            } else if(stats) {
-              resolve(validarOpciones(links))
-            }
+    if (existeRuta(path)){
+      // console.log(existeRuta(ruta), 'hola mi ruta esta aquí')
+      if (resolverRuta(path)){
+        // console.log(resolverRuta(ruta), 'mi ruta es soy absoluta')
+        if (md(path)){
+          // console.log(md(ruta), 'mi archivo es md :)')
+          if (leerArchivo('./files/links.md').then((result) => {
+            const links = processLink(result,'./files/links.md')
+            if (!options.validate) {
+              resolve(links)
+                // (result, ruta)) //si el resultado es negativo, solo me debe devolver los link, no validarlos.
+            } else {
+              resolve(validarLinks(links))
+              // (result, ruta) //en cambio si es true, debe validar el link.
+            } 
           }).catch((error) => {
             reject(error)
           })
@@ -27,7 +27,11 @@ const mdLinks = () => {
         })    
   }
 
-mdLinks(ruta, {validate}).then().catch
+mdLinks('./files/links.md', {validate:true}).then(console.log).catch(console.log)
+
+module.exports = {
+  mdLinks
+};
 
 
 

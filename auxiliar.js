@@ -1,53 +1,15 @@
 const path = require('path');
 const fs = require('fs');
-const process = require('process'); //process.argv siempre me devolvera un arreglo con elementos tipo strings.
-
-const registroTotal = process.argv;
-const ruta = process.argv[2]
-const validate = registroTotal.includes('--validate') 
-
-const stats = registroTotal.includes('--stats') 
-
-
-
-const validarOpciones = (linkResult) => {
-
-  const total = linkResult.length;
-  const hrefs = linkResult.map(link => link.href);
-  const uniqueHrefs = new Set(hrefs);
-  const mensajeError = linkResult.filter(link => link.ok !== 'OK');
-  const uniqueFails = new Set(mensajeError);
-
-  const statsResponse = {
-    Total: total,
-    Unique: uniqueHrefs.size,
-    Broken: uniqueFails.size,
-  }
-  console.log(statsResponse, 'LO QUE FALTA VERSE')
-  return statsResponse;
-
-}
-
-
-
-
-//AUXILIAR
 
 //1. ¿Existe la ruta??
 const existeRuta = (ruta) => {
   return fs.existsSync(ruta)
 };
 
-
 //2. ¿Es absoluta? Transformación de Ruta relativa a absoluta
 const resolverRuta = (ruta) => {
   return path.resolve(ruta)
 };
-//2.1 Ruta absoluta
-// const rutaAbsoluta = (ruta) => {
-//   return path.isAbsolute(ruta)
-// };
-// console.log(rutaAbsoluta)
 
 //3.¿Es un archivo md? 
 const md = (ruta) => {
@@ -58,7 +20,7 @@ const md = (ruta) => {
     return false
   }
 };
-// md('./files/links.md');
+md('./files/links.md');
 
 //4. Leer archivo
 const leerArchivo = (ruta) => {
@@ -72,13 +34,13 @@ const leerArchivo = (ruta) => {
     })
   })
 };
-leerArchivo(ruta).then((result) => {
+leerArchivo('./files/links.md').then((result) => {
   console.log(result)
 }).catch((error) => {
   console.log(error)
 });
 
-let links = [];
+
 //5.6. Validación y extración de links si el archivo tiene links. 
 const processLink = (contenidoArchivo, contenidoRuta) => {
   // console.log(contenidoArchivo)
@@ -93,14 +55,12 @@ const processLink = (contenidoArchivo, contenidoRuta) => {
       file: contenidoRuta,
     }
   })
-  // console.log(informationLink)
-  links.push(informationLink)
+
   return informationLink
 }
-leerArchivo(ruta).then((result) => {
-  processLink(result, ruta)
+leerArchivo('./files/links.md').then((result) => {
+  processLink(result, './files/links.md')
 });
-console.log(links, "HOLA")
 
 //7. Validar los link y recorrer los HTML
 const validarLinks = (arregloDatos) => {
@@ -108,7 +68,7 @@ const validarLinks = (arregloDatos) => {
     return fetch(objetos.href)
       .then((respuesta) => {
         return {
-          href: objetos.href, //repasar los objetos, qué le estoy pasando.
+          href: objetos.href, 
           text: objetos.text,
           file: objetos.file,
           status: respuesta.status,
@@ -120,16 +80,15 @@ const validarLinks = (arregloDatos) => {
           href: objetos.href,
           text: objetos.text,
           file: objetos.file,
+          status:error.message,
+          ok:'fail',
         }
       })
   });
   return Promise.all(recorrerDatos)
 }
-
-
-
-leerArchivo(ruta).then((result) => {
-  validarLinks(processLink(result, ruta)).then(console.log)
+leerArchivo('./files/links.md').then((result) => {
+  validarLinks(processLink(result, './files/links.md')).then(console.log)
 })
 
 
@@ -140,11 +99,7 @@ module.exports = {
   leerArchivo,
   validarLinks,
   processLink,
-  ruta,
-  validate,
-  stats,
-  links,
-  validarOpciones
+  
 };
 
 

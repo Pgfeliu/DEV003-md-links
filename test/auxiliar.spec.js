@@ -1,7 +1,7 @@
 const functionAuxiliares = require('../auxiliar.js');
 
 describe('ver si la ruta existe', () => {
-    it ('si existe la ruta retornar true', () =>{
+       it ('si existe la ruta retornar true', () =>{
         expect(functionAuxiliares.existeRuta('./files/links.md')).toEqual(true)
     });
 });
