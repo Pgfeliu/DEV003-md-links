@@ -2,17 +2,17 @@ const path = require('path');
 const fs = require('fs');
 
 //1. ¿Existe la ruta??
-const existeRuta = (ruta) => {
+const pathExist = (ruta) => {
   return fs.existsSync(ruta)
 };
 
 //2. ¿Es absoluta? Transformación de Ruta relativa a absoluta
-const resolverRuta = (ruta) => {
+const pathAbsolute = (ruta) => {
   return path.resolve(ruta)
 };
 
 //3.¿Es un archivo md? 
-const md = (ruta) => {
+const fileExtension = (ruta) => {
   const extension = path.extname(ruta);
   if (extension === '.md') {
     return true
@@ -20,10 +20,10 @@ const md = (ruta) => {
     return false
   }
 };
-md('./files/links.md');
+fileExtension('./files/links.md');
 
 //4. Leer archivo
-const leerArchivo = (ruta) => {
+const readFiles = (ruta) => {
   return new Promise((resolve, reject) => {
     fs.readFile(ruta, 'utf-8', (err, data) => {
       if (err) {
@@ -34,41 +34,40 @@ const leerArchivo = (ruta) => {
     })
   })
 };
-leerArchivo('./files/links.md').then((result) => {
-  console.log(result)
-}).catch((error) => {
-  console.log(error)
-});
+// readFiles('./files/links.md').then((result) => {
+//   console.log(result)
+// }).catch((error) => {
+//   console.log(error)
+// });
 
 
-//5.6. Validación y extración de links si el archivo tiene links. 
-const processLink = (contenidoArchivo, contenidoRuta) => {
+//5. Analisis de los link
+const analyzeLink = (fileContent, pathContent) => {
   // console.log(contenidoArchivo)
-  const linkCompletoExpresReg = /\[([^\]]+)\]\((http[s]?:\/\/[^\)]+)\)/g; //expresión regular
+  const totalLinkExpresReg = /\[([^\]]+)\]\((http[s]?:\/\/[^\)]+)\)/g; //expresión regular
   //tomar el contenido del archivo y comparalo a la expresión regular  (linkCompleto)
   const url = /\(([^)]+)\)/ //me muestra solo lo que esta en parentesis del link.
   const keys = /\[(.*?)\]/; //me muetra lo que esta entre llaves del link
-  const informationLink = Array.from(contenidoArchivo.match(linkCompletoExpresReg), (links) => {
+  const informationLink = Array.from(fileContent.match(totalLinkExpresReg), (links) => {
     return {
       href: links.match(url)[1],
       text: links.match(keys)[1],
-      file: contenidoRuta,
+      file: pathContent,
     }
   })
-
   return informationLink
 }
-leerArchivo('./files/links.md').then((result) => {
-  processLink(result, './files/links.md')
-});
+// readFiles('./files/links.md').then((result) => {
+//   analyzeLink(result, './files/links.md')
+// });
 
-//7. Validar los link y recorrer los HTML
-const validarLinks = (arregloDatos) => {
-  const recorrerDatos = arregloDatos.map(objetos => {
+//7. Status de los links
+const validateLinks = (arrData) => {
+  const analyzeDatos = arrData.map(objetos => {
     return fetch(objetos.href)
       .then((respuesta) => {
         return {
-          href: objetos.href, 
+          href: objetos.href,
           text: objetos.text,
           file: objetos.file,
           status: respuesta.status,
@@ -80,26 +79,27 @@ const validarLinks = (arregloDatos) => {
           href: objetos.href,
           text: objetos.text,
           file: objetos.file,
-          status:error.message,
-          ok:'fail',
+          status: error.message,
+          ok: 'fail',
         }
       })
   });
-  return Promise.all(recorrerDatos)
+  return Promise.all(analyzeDatos)
 }
-leerArchivo('./files/links.md').then((result) => {
-  validarLinks(processLink(result, './files/links.md')).then(console.log)
-})
+// readFiles('./files/links.md').then((result) => {
+//   validarLinks(analyzeLink(result, './files/links.md')).then(console.log)
+// })
 
 
 module.exports = {
-  md,
-  existeRuta,
-  resolverRuta,
-  leerArchivo,
-  validarLinks,
-  processLink,
-  
+
+  pathExist,
+  pathAbsolute,
+  fileExtension,
+  readFiles,
+  analyzeLink,
+  validateLinks
+
 };
 
 

@@ -45,7 +45,7 @@ mdLinks(path, options).then(result => {
         console.log('ok:', links.ok)
        })
     }else if(stats){
-        console.log('total',totalLinks(result))
+        console.log('Total',totalLinks(result))
         console.log('Unique',uniqueLinks(result))
     }else{
         result.forEach(links =>{
