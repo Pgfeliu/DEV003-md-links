@@ -1,4 +1,5 @@
 const functionAuxiliares = require('../auxiliar.js');
+global.fetch = jest.fn()
 
 describe('ver si la ruta existe', () => {
        it ('si existe la ruta retornar true', () =>{
@@ -22,3 +23,51 @@ describe('es una ruta absoluta', () =>{
         expect(functionAuxiliares.pathAbsolute('files\\links.md')).toEqual('C:\\Users\\the_p\\OneDrive\\Desktop\\ProyectosPame\\DEV003-pame md-links\\files\\links.md')
     });
 });
+
+// Test con Mock
+
+const firstArray = [{
+    href: 'https://es.wikipedia.og/wiki/Markdown',
+    text: 'Markdown',
+    file: 'files/links.md',
+  },
+  {
+    href: 'https://es.wikipedia.org/wiki/Markdown',
+    text: 'Link-roto',
+    file: 'files/links.md',
+  }
+]
+
+const lastArray = [{
+    href: 'https://es.wikipedia.og/wiki/Markdown',
+    text: 'Markdown',
+    file: 'files/links.md',
+    status: 200,
+    ok: 'ok'
+  },
+  {
+    href: 'https://es.wikipedia.org/wiki/Markdown',
+    text: 'Link-roto',
+    file: 'files/links.md',
+    status: 400,
+    ok: 'fail'
+  }]
+
+//fetch.mockImplementationOnce(cb => cb(null,true))
+// .mockImplementationOnce(cb => cb(null,false))
+
+
+describe('test para validar los links', () => {
+ fetch.mockImplementationOnce(() => Promise.resolve({status: 200, statusText: 'ok'}))
+.mockImplementationOnce(() => Promise.reject({status: 400, statusText: 'fail'}))
+    it('retornar el array recorrido', () => {
+        functionAuxiliares.validateLinks(firstArray).then((result) => {
+            expect(result).toEqual(lastArray)
+        })
+    })
+    it('retornar el array recorrido aunque este roto', () => {
+        functionsAuxiliares.validateLinks(firstArray).then((result) => {
+            expect(result).toEqual(lastArray)
+        })
+    })
+})
